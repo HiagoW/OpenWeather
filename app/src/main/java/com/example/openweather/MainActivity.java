@@ -46,7 +46,12 @@ public class MainActivity extends AppCompatActivity {
                     dados += "\nTemperatura atual: " + kelvinToCelsius(d.getMain().getTemp()) + "º";
                     dados += "\nTemperatura mínima: " + kelvinToCelsius(d.getMain().getTemp_min()) + "º";
                     dados += "\nTemperatura máxima: " + kelvinToCelsius(d.getMain().getTemp_max()) + "º";
-//                    dados += "\nChuva: " + d.getMain().getRain().getH();
+                    dados += "\nPrevisão de chuva para próxima hora: ";
+                    try{
+                        dados += d.getMain().getRain().getH() + "%";
+                    }catch (Exception e){
+                        dados += "Não disponível";
+                    }
 
                     textView.setText(dados);
                     progressDialog.dismiss();
