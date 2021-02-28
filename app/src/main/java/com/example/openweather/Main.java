@@ -8,7 +8,6 @@ public class Main {
     private float temp_min;
     private float temp_max;
     private float humidity;
-    private Rain rain;
 
     public float getTemp() {
         return temp;
@@ -40,14 +39,6 @@ public class Main {
 
     public void setHumidity(float humidity) {
         this.humidity = humidity;
-    }
-
-    public Rain getRain() {
-        return rain;
-    }
-
-    public void setRain(Rain rain) {
-        this.rain = rain;
     }
 
 }

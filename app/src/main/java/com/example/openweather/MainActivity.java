@@ -28,45 +28,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void pesquisar(View view){
-        String cidade = editText.getText().toString();
+        if(editText.getText().length()==0){
+            Toast.makeText(this,"Digite a cidade e a sigla do país.",Toast.LENGTH_SHORT).show();
+        }else {
+            String cidade = editText.getText().toString().trim();
 
-        Call<Dados> call =new RetrofitConfig().getAPIService().getDados(cidade, "ecb23adcf97322835953f1ed6ffc9252");
+            Call<Dados> call = new RetrofitConfig().getAPIService().getDados(cidade, "ecb23adcf97322835953f1ed6ffc9252");
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Buscando dados...");
-        progressDialog.show();
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Buscando dados...");
+            progressDialog.show();
 
-        call.enqueue(new Callback<Dados>() {
-            @Override
-            public void onResponse(Call<Dados> call, Response<Dados> response) {
-                if(response.isSuccessful()){
-                    Dados d =response.body();
-                    String dados = "";
-                    dados += "Umidade: " + d.getMain().getHumidity() + "%";
-                    dados += "\nTemperatura atual: " + kelvinToCelsius(d.getMain().getTemp()) + "º";
-                    dados += "\nTemperatura mínima: " + kelvinToCelsius(d.getMain().getTemp_min()) + "º";
-                    dados += "\nTemperatura máxima: " + kelvinToCelsius(d.getMain().getTemp_max()) + "º";
-                    dados += "\nPrevisão de chuva para próxima hora: ";
-                    try{
-                        dados += d.getMain().getRain().getH() + "%";
-                    }catch (Exception e){
-                        dados += "Não disponível";
+            call.enqueue(new Callback<Dados>() {
+                @Override
+                public void onResponse(Call<Dados> call, Response<Dados> response) {
+                    if (response.isSuccessful()) {
+                        Dados d = response.body();
+                        String dados = "";
+                        dados += "Umidade: " + d.getMain().getHumidity() + "%";
+                        dados += "\nTemperatura atual: " + kelvinToCelsius(d.getMain().getTemp()) + "º";
+                        dados += "\nTemperatura mínima: " + kelvinToCelsius(d.getMain().getTemp_min()) + "º";
+                        dados += "\nTemperatura máxima: " + kelvinToCelsius(d.getMain().getTemp_max()) + "º";
+                        dados += "\nPrevisão de chuva para próxima hora: ";
+                        try {
+                            dados += d.getRain().getH() + "%";
+                        } catch (Exception e) {
+                            dados += "Não disponível";
+                        }
+
+                        textView.setText(dados);
+                        progressDialog.dismiss();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Erro ao buscar dados.", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                     }
+                }
 
-                    textView.setText(dados);
-                    progressDialog.dismiss();
-                }else{
+                @Override
+                public void onFailure(Call<Dados> call, Throwable t) {
                     Toast.makeText(MainActivity.this, "Erro ao buscar dados.", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<Dados> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Erro ao buscar dados.", Toast.LENGTH_SHORT).show();
-                progressDialog.dismiss();
-            }
-        });
+            });
+        }
     }
 
     private String kelvinToCelsius(float kelvin){
